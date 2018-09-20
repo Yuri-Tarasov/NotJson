@@ -6,5 +6,3 @@ njsNode:
  - next (ref for next object njsNode)
  
  
- \
-  \
