@@ -12,7 +12,7 @@ njsNode:
 ```javascript
 var root = new njsNode("Cars");
 
-// Magic! Not throw 'TypeError: Cannot set property of undefined'
+// Magic! No throw 'TypeError: Cannot set property of undefined'
 root["Models"]["Ford"]["Fiesta"] = "Comment for Fiesta";  
 root["Models"]["Ford"]["Focus"] = "Comment for Focus";
 root["Models"]["Ford"]["Mustang"] = "Comment for Mustang";
