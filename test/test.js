@@ -68,11 +68,11 @@ ReursIterat(root);
 myObj = {
     "name": "John",
     "age": 30,
-    "cars": [
-        { "name": "Ford", "models": ["Fiesta", "Focus", "Mustang"] },
-        { "name": "BMW", "models": ["320", "X3", "X5"] },
-        { "name": "Fiat", "models": ["500", "Panda"] }
-    ]
+    "cars": {
+        "Ford": ["Fiesta", "Focus", "Mustang"],
+        "BMW": ["320", "X3", {"X5": {'Colors' : ["Red", "Black"]}}] ,
+        "Fiat": ["500", "Panda"]
+    }
 }
 
 
@@ -81,4 +81,19 @@ root.InitFormObj(myObj);
 console.log("");
 console.log("Initialized from Object")
 console.log(root.toString(0, false)); // do not show [type] 
+console.log("");
 
+root.Clear("Cars");
+
+root["Models"]["Ford"]["Fiesta"] = "Comment for Fiesta";  
+root["Models"]["Ford"]["Focus"] = "Comment for Focus";
+root["Models"]["Ford"]["Mustang"] = "Comment for Mustang";
+
+root["Models"]["BMW"]["320"] = "Comment for 320"; 
+root["Models"]["BMW"]["X3"] = "Comment for X3";
+root["Models"]["BMW"]["X5"] = "Comment for X5";
+
+root["Models"]["Fiat"]["500"] = "Comment for 500"; 
+root["Models"]["Fiat"]["Panda"] = "Comment for Panda";
+
+console.log(root.toString(0, false)); // do not show [type] 

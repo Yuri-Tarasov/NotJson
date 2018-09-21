@@ -63,8 +63,8 @@ class njsNode {
         return vv;
     }
 
-    Clear() {
-        this.key_name = K_NO_NAME;
+    Clear(key_name) {
+        this.key_name = key_name ? key_name : K_ROOT_NAME;
         this._type = "null";
         this._childs = [];
         this.value = null;
@@ -195,12 +195,13 @@ njsNode.prototype.InitFormObj = function (objInit, node = null) {
     }
     if (Array.isArray(objInit)) {
         for (var i = 0; i < objInit.length; ++i) {
-            this.InitFormObj(objInit[i], node.child("item", i, true))
+            var item = objInit[i];
+            this.InitFormObj(item, node.child("item_" + i, null, true));
         }
     }
     else if (typeof (objInit) === 'object') {
         for (var prop in objInit) {
-            console.log("prop", prop);
+            //console.log("prop", prop);
             this.InitFormObj(objInit[prop], node.child(prop, null, true));
         }
     } else {
