@@ -8,7 +8,7 @@ njsNode:
  - childs (list ref objects njsNode)
 
 
-`let`Init for JS
+### Init for JS
 ```javascript
 var root = new njsNode("Cars");
 
@@ -24,10 +24,10 @@ root["Models"]["BMW"]["X5"] = "Comment for X5";
 root["Models"]["Fiat"]["500"] = "Comment for 500"; 
 root["Models"]["Fiat"]["Panda"] = "Comment for Panda";
 
-// Output
+
 console.log(root.toString(0, false)); // do not show [type] 
 ```
-`let` Result
+### Result
 ```text
 Cars: 
   Models: 
