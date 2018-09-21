@@ -8,7 +8,7 @@ const K_NO_NAME = "NoName";
 
 const njsNode_hndl  = 
 {
-    get: function(target, name) 
+    'get': function(target, name) 
     {
         var type = typeof name;
         if (type !== 'string')
@@ -24,7 +24,7 @@ const njsNode_hndl  =
         return target.child(name);
     },
 
-    set: function(target, name, val) 
+    'set': function(target, name, val) 
     {
         
         //console.log("f set(" + target.key_name + ") " + name + " = " + val);
@@ -45,11 +45,14 @@ const njsNode_hndl  =
         if( name in target) {
             target[name] = val;          
         } else {
-
-            return target.child(name, val);
+            //console.log("not found property " + name);
+            target.child(name, val);
         }
         return true;
-    }
+    },
+
+
+
 }
 
 
@@ -65,16 +68,15 @@ class njsNode
         return vv;
     }
 
-/*
-    Object.defineProperty(this, 'value', {
-        get: function() {
-          return _value;
-        },
-        set: function(value) {          
-          _value = value;
+    keys() {
+
+        var arKeys = [];
+        for (var i = 0; i < this._childs.length; ++i)
+        {
+            arKeys.push(this._childs[i].key_name);
         }
-    });
-*/
+        return arKeys[Symbol.iterator]();
+    }
 
     // Private
     // get last node
