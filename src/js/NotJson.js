@@ -1,4 +1,3 @@
-
 /*
  * NotJson for JavaScript
  *
@@ -7,36 +6,30 @@
 const K_NO_NAME = "NoName";
 const K_ROOT_NAME = "Root";
 
-const njsNode_hndl  = 
+const njsNode_hndl =
 {
-    'get': function(target, name) 
-    {
+    'get': function (target, name) {
         var type = typeof name;
-        if (type !== 'string')
-        {
+        if (type !== 'string') {
             return target[name];
         }
-        
-           if( name in target) {
-               //console.log("ret ext " + name);
-               return target[name];
-           }
+
+        if (name in target) {
+            //console.log("ret ext " + name);
+            return target[name];
+        }
         //console.log("get " + name );
 
         return target.child(name);
     },
 
-    'set': function(target, name, val) 
-    {
-        
+    'set': function (target, name, val) {
+
         //console.log("f set(" + target.key_name + ") " + name + " = " + val);
-        if (name === "value")
-        {
+        if (name === "value") {
             var type = typeof val;
-            if (type === 'number') 
-            {
-                if (Number.isInteger(val))
-                {
+            if (type === 'number') {
+                if (Number.isInteger(val)) {
                     type = "int64";
                 } else {
                     type = "float";
@@ -44,8 +37,8 @@ const njsNode_hndl  =
             }
             target._type = type;
         }
-        if( name in target) {
-            target[name] = val;          
+        if (name in target) {
+            target[name] = val;
         } else {
             //console.log("not found property " + name);
             target.child(name, val);
@@ -59,10 +52,9 @@ const njsNode_hndl  =
 }
 
 
-class njsNode
-{
-    constructor (key_name) {
-        
+class njsNode {
+    constructor(key_name) {
+
         this.key_name = key_name;
         this._type = "null";
         this._childs = [];
@@ -82,33 +74,27 @@ class njsNode
 
     // Private
     // get last node
-    _getLast() 
-    {
+    _getLast() {
         var last = null;
-        if (this._childs.length)
-        {
+        if (this._childs.length) {
             last = this._childs[this._childs.length];
-        } 
+        }
         return last;
     }
 
     // Private
     // make last node
-    _makeLast(key_name) 
-    {
+    _makeLast(key_name) {
         var id = this._childs.length;
         var node = new njsNode(key_name);
-        this._childs[id] = node;        
+        this._childs[id] = node;
         return node;
     }
 
-    _getChild(key_name)
-    {
+    _getChild(key_name) {
         var node = null;
-        for (var i = 0; i < this._childs.length; ++i)
-        {
-            if (key_name === this._childs[i].key_name)
-            {
+        for (var i = 0; i < this._childs.length; ++i) {
+            if (key_name === this._childs[i].key_name) {
                 node = this._childs[i];
                 break;
             }
@@ -116,97 +102,83 @@ class njsNode
         return node;
     }
 
-    _getOrMakeChild(key_name)
-    {
+    _getOrMakeChild(key_name) {
         var node = this._getChild(key_name);
-        if (!node)
-        {
+        if (!node) {
             node = this._makeLast(key_name);
         }
         return node;
     }
 
-    child(key_name, value, bAllowDuplicate = false)
-    {
-        if (!key_name)
-        {
+    child(key_name, value, bAllowDuplicate = false) {
+        if (!key_name) {
             key_name = K_NO_NAME;
         }
         var node = null;
-        if (bAllowDuplicate)
-        {
+        if (bAllowDuplicate) {
             node = this._makeLast(key_name);
         } else {
             node = this._getChild(key_name);
         }
         var type = typeof value;
-        if (value === null)
-        {
+        if (value === null) {
             type = "null";
-        }    
-
-        if (njsNode.debug && type === 'undefined' && !node )
-        {
-            console.log("Not found key_name - '" + key_name + "'");
-        } 
-
-        if (!node)
-        {
-            node = this._makeLast( key_name);
         }
 
-        if (type !== 'undefined')
-        {     
+        if (njsNode.debug && type === 'undefined' && !node) {
+            console.log("Not found key_name - '" + key_name + "'");
+        }
+
+        if (!node) {
+            node = this._makeLast(key_name);
+        }
+
+        if (type !== 'undefined') {
             //console.log("type = ", type, ", val ", value);
             node.value = value;
         }
-        return  node;
+        return node;
     }
 
     // short alias for .child()
-    _(key_name, value, bAllowDuplicate = false)
-    {
-         return this.child(key_name, value, bAllowDuplicate);
+    _(key_name, value, bAllowDuplicate = false) {
+        return this.child(key_name, value, bAllowDuplicate);
     }
 
-    toString( n = 0, bSowType = true )
-    {
+    toString(n = 0, bSowType = true) {
         var str = "";
         str += '  '.repeat(n);
         var val;
-        if (this._type === 'number')
-        {
+        if (this._type === 'number') {
             val = this.value;
-        } else if(this._type === 'string') {
+        } else if (this._type === 'string') {
             val = "'" + this.value + "'";
         } else {
             val = this.value;
         }
 
         str += this.key_name + ": " + (val !== null ? val : "");
-        if (bSowType)
-        {
-            str +=  " [" + this._type +"]";
+        if (bSowType) {
+            str += " [" + this._type + "]";
         }
         str += "\n";
-        for (var i = 0; i < this._childs.length; ++i)
-        {
+        for (var i = 0; i < this._childs.length; ++i) {
             str += this._childs[i].toString(n + 1, bSowType);
         }
         return str;
     }
 
     [Symbol.iterator]() {
-       var arChilds = this._childs;
-       return {
-            next: function() {
-              var i = this.i++;
-              if (i < this.arChilds.length) {
-                return { value: this.arChilds[i], done: false };
-              } else {
-                //this.i = 0;
-                return { done: true };
-              }
+        var arChilds = this._childs;
+        return {
+            next: function () {
+                var i = this.i++;
+                if (i < this.arChilds.length) {
+                    return { value: this.arChilds[i], done: false };
+                } else {
+                    //this.i = 0;
+                    return { done: true };
+                }
             },
             'i': 0,
             'arChilds': arChilds
@@ -214,10 +186,8 @@ class njsNode
     }
 }
 
-njsNode.prototype.InitFormObj = function(objInit, node = null)
-{
-    if (!node)
-    {
+njsNode.prototype.InitFormObj = function (objInit, node = null) {
+    if (!node) {
         console.log("start init fron obj");
         node = this;
         node.Clear();
@@ -228,7 +198,7 @@ njsNode.prototype.InitFormObj = function(objInit, node = null)
             this.InitFormObj(objInit[i], node.child("item", i, true))
         }
     }
-    else if (typeof(objInit) === 'object') {
+    else if (typeof (objInit) === 'object') {
         for (var prop in objInit) {
             console.log("prop", prop);
             this.InitFormObj(objInit[prop], node.child(prop, null, true));
@@ -243,15 +213,14 @@ njsNode.debug = false;
 
 
 
-function NotJson(key_name)
-{
+function NotJson(key_name) {
     return new njsNode(key_name ? key_name : "Root");
 }
 
 
 
 module.exports = {
-   new: NotJson,
-   njsNode: njsNode
+    new: NotJson,
+    njsNode: njsNode
 }
 
