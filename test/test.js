@@ -33,20 +33,23 @@ root["last"].value += 9; // must value -> 14
 console.log( root.toString()); // dump
 
 console.log("Hand Iterations");
-for (var key of  root.keys())
+for (var key of  root)
 {
     console.log("key = " + key);
     console.log("val = " + root[key].value);
 
-    for (var key2 of  root[key].keys())
+    for (var key2 of  root[key])
     {
         console.log("  key2 = " + key2);
         console.log("  val2 = " + root[key][key2].value);
 
-        for (var key3 of  root[key][key2].keys())
+        for (var key3 of  root[key][key2])
         {
             console.log("    key3 = " + key3);
             console.log("    val3 = " + root[key][key2][key3].value);
         }
     }
 }
+
+
+//console.log("root ", Object.keys(root)); 

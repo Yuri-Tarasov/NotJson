@@ -13,8 +13,9 @@ const njsNode_hndl  =
         var type = typeof name;
         if (type !== 'string')
         {
-            return true;
+            return target[name];
         }
+        
            if( name in target) {
                //console.log("ret ext " + name);
                return target[name];
@@ -51,7 +52,9 @@ const njsNode_hndl  =
         return true;
     },
 
+    //'ownKeys': function(target) {
 
+    //}
 
 }
 
@@ -75,8 +78,9 @@ class njsNode
         {
             arKeys.push(this._childs[i].key_name);
         }
-        return arKeys[Symbol.iterator]();
+        return arKeys;
     }
+
 
     // Private
     // get last node
@@ -193,7 +197,20 @@ class njsNode
         return str;
     }
 
-
+    [Symbol.iterator]() {
+       var arKeys = this.keys();
+       return {
+            next: function() {
+              if (this.i < arKeys.length) {
+                return { value: arKeys[this.i++], done: false };
+              } else {
+                return { done: true };
+              }
+            },
+            'arKeys': arKeys,
+            'i': 0,
+        }
+    }
 }
 
 
