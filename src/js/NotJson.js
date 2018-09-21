@@ -5,6 +5,7 @@
 */
 
 const K_NO_NAME = "NoName";
+const K_ROOT_NAME = "Root";
 
 const njsNode_hndl  = 
 {
@@ -53,7 +54,6 @@ const njsNode_hndl  =
     },
 
     //'ownKeys': function(target) {
-
     //}
 
 }
@@ -71,14 +71,12 @@ class njsNode
         return vv;
     }
 
-    keys() {
-
-        var arKeys = [];
-        for (var i = 0; i < this._childs.length; ++i)
-        {
-            arKeys.push(this._childs[i].key_name);
-        }
-        return arKeys;
+    Clear() {
+        this.key_name = K_NO_NAME;
+        this._type = "null";
+        this._childs = [];
+        this.value = null;
+        this._childs = [];
     }
 
 
@@ -171,14 +169,10 @@ class njsNode
          return this.child(key_name, value, bAllowDuplicate);
     }
 
-    toString( n = 0 )
+    toString( n = 0, bSowType = true )
     {
         var str = "";
-        var nn = n;
-        while (nn--)
-        {
-            str += "  ";
-        }
+        str += '  '.repeat(n);
         var val;
         if (this._type === 'number')
         {
@@ -189,30 +183,60 @@ class njsNode
             val = this.value;
         }
 
-        str += this.key_name + ": " + val + " [" + this._type +"]\n";
+        str += this.key_name + ": " + (val !== null ? val : "");
+        if (bSowType)
+        {
+            str +=  " [" + this._type +"]";
+        }
+        str += "\n";
         for (var i = 0; i < this._childs.length; ++i)
         {
-            str += this._childs[i].toString(n + 1);
+            str += this._childs[i].toString(n + 1, bSowType);
         }
         return str;
     }
 
     [Symbol.iterator]() {
-       var arKeys = this.keys();
+       var arChilds = this._childs;
        return {
             next: function() {
-              if (this.i < arKeys.length) {
-                return { value: arKeys[this.i++], done: false };
+              var i = this.i++;
+              if (i < this.arChilds.length) {
+                return { value: this.arChilds[i], done: false };
               } else {
+                //this.i = 0;
                 return { done: true };
               }
             },
-            'arKeys': arKeys,
             'i': 0,
+            'arChilds': arChilds
         }
     }
 }
 
+njsNode.prototype.InitFormObj = function(objInit, node = null)
+{
+    if (!node)
+    {
+        console.log("start init fron obj");
+        node = this;
+        node.Clear();
+        node.key_name = K_ROOT_NAME;
+    }
+    if (Array.isArray(objInit)) {
+        for (var i = 0; i < objInit.length; ++i) {
+            this.InitFormObj(objInit[i], node.child("item", i, true))
+        }
+    }
+    else if (typeof(objInit) === 'object') {
+        for (var prop in objInit) {
+            console.log("prop", prop);
+            this.InitFormObj(objInit[prop], node.child(prop, null, true));
+        }
+    } else {
+        node.value = objInit;
+    }
+}
 
 njsNode.debug = false;
 
@@ -227,9 +251,6 @@ function NotJson(key_name)
 
 
 module.exports = {
-   hello: function() {
-      return "Hello";
-   },
    new: NotJson,
    njsNode: njsNode
 }
