@@ -1,4 +1,7 @@
-Base element of NotJson - njsNode object.
+# NotJson
+**NotJson** tree like data structure 
+
+Base element of NotJson - **njsNode** object.
 
 njsNode:
  - value (String, Int16, Int32, Int64, Float, Double, Binary, Null)
