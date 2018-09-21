@@ -5,7 +5,8 @@ njsNode:
  - childs (list ref objects njsNode)
 
 
-Init for JS
+`let`Init for JS
+```javascript
 var root = new njsNode("Cars");
 
 // Magic! Not throw 'TypeError: Cannot set property of undefined'
@@ -22,8 +23,9 @@ root["Models"]["Fiat"]["Panda"] = "Comment for Panda";
 
 // Output
 console.log(root.toString(0, false)); // do not show [type] 
-
-// Result
+```
+`let` Result
+```text
 Cars: 
   Models: 
     Ford: 
@@ -37,7 +39,7 @@ Cars:
     Fiat: 
       500: 'Comment for 500'
       Panda: 'Comment for Panda'
-
+```
 
 
 
