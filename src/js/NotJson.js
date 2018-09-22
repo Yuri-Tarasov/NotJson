@@ -184,7 +184,7 @@ class njsNode {
             'arChilds': arChilds
         }
     }
-}
+};
 
 njsNode.prototype.InitFormObj = function (objInit, node = null) {
     if (!node) {
@@ -221,7 +221,6 @@ function NotJson(key_name) {
 
 
 module.exports = {
-    new: NotJson,
-    njsNode: njsNode
+    njsNode
 }
 

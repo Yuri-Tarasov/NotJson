@@ -3,12 +3,12 @@
  * 
  *************************/
 
-
+//import njsNode from '../src/js/NotJson.js';
 const NotJson = require('../src/js/NotJson.js');
 
-//NotJson.njsNode.debug = true;
+//njsNode.debug = true;
 
-var root = NotJson.new();
+var root = new NotJson.njsNode;
 var node;
 
 root.child("Item_1", "27").child("Item_1_1", "dd");
