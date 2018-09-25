@@ -1,5 +1,5 @@
 # NotJson
-**NotJson** - Tree like data structure with binary serialization to socket or file! 
+**NotJson** is a Tree like data structure with binary serialization to socket or file! 
 
 # Why use NotJson?
 In Json, each node can be a real value - String, Number, Bool and another object or Array.
@@ -28,24 +28,32 @@ root["Models"]["BMW"]["X5"] = "Comment for X5";
 root["Models"]["Fiat"]["500"] = "Comment for 500"; 
 root["Models"]["Fiat"]["Panda"] = "Comment for Panda";
 
+root["Models"] = "Comment for group Models";
+root["Models"]["BMW"] = "Comment for group Models/BMW";
+
+// use reserved key - "item" for append to end
+root["item"] = "value for item first"; // will be rename to -> item_0
+root["item"] = "value for item second";  // will be rename to -> item_1
 
 console.log(root.toString(0, false)); // do not show [type] 
 ```
 ### Result
 ```text
 Cars: 
-  Models: 
+  Models: 'Comment for group Models'
     Ford: 
       Fiesta: 'Comment for Fiesta'
       Focus: 'Comment for Focus'
       Mustang: 'Comment for Mustang'
-    BMW: 
+    BMW: 'Comment for group Models/BMW'
       320: 'Comment for 320'
       X3: 'Comment for X3'
       X5: 'Comment for X5'
     Fiat: 
       500: 'Comment for 500'
       Panda: 'Comment for Panda'
+  item_0: 'value for item first'
+  item_1: 'value for item second
 ```
 
 

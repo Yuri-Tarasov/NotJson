@@ -1,0 +1,29 @@
+{
+  "name": "not-json",
+  "version": "1.0.0",
+  "description": "Tree like data structure with binary serialization to socket or file!",
+  "main": "dist/node/NotJson.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Yuri-Tarasov/NotJson.git"
+  },
+  "keywords": [
+    "json",
+    "data",
+    "tree",
+    "binary",
+    "serialization"
+  ],
+  "author": "Yuri Tarasov",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/Yuri-Tarasov/NotJson/issues"
+  },
+  "homepage": "https://github.com/Yuri-Tarasov/NotJson#readme"
+}
