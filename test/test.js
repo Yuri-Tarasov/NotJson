@@ -113,8 +113,8 @@ root["item"] = 32767; // add Int16
 root["item"] = 32768; // add Int32   
 root["item"] = 2147483647; // add Int32   
 root["item"] = 2147483648; // add Int64   
-root["item"] = 3.14; // add Float32   
-root["item"] = 3.402823466e+39 + 1.2e+39; // add Float64   
+root["Float data"]["item"] = 3.14; // add Float32   
+root["Float data"]["item"] = 3.402823466e+39 + 1.2e+39; // add Float64  
 
 
 console.log(root.toString(0, false)); // do not show [type] 
