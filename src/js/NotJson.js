@@ -78,20 +78,32 @@ function utf8to16(str) {
     return out;
 }
 
+
+const NJS_TYPE_STRING = 100;
+const NJS_TYPE_INT8 = 101;
+const NJS_TYPE_INT16 = 102;
+const NJS_TYPE_INT32 = 103;
+const NJS_TYPE_INT64 = 104;
+const NJS_TYPE_FLOAT32 = 105;
+const NJS_TYPE_FLOAT64 = 106;
+const NJS_TYPE_BOOL = 107;
+const NJS_TYPE_BINARY = 108;
+const NJS_TYPE_NULL = 109;
+
 var njsTypeEnum = {
-    "String" : 100,
-    "Int8" : 101,
-    "Int16" : 102,
-    "Int32" : 103,
-    "Int64" : 104,
-    "Float32" : 105,
-    "Float64" : 106,
-    "Bool" : 107,
-    "Binary" : 108,
-    "Null" : 109,
+    "String" : NJS_TYPE_STRING,
+    "Int8" : NJS_TYPE_INT8,
+    "Int16" : NJS_TYPE_INT16,
+    "Int32" : NJS_TYPE_INT32,
+    "Int64" : NJS_TYPE_INT64,
+    "Float32" : NJS_TYPE_FLOAT32,
+    "Float64" : NJS_TYPE_FLOAT64,
+    "Bool" : NJS_TYPE_BOOL,
+    "Binary" : NJS_TYPE_BINARY,
+    "Null" : NJS_TYPE_NULL,
     
-    "MinValue" : 100,
-    "MaxValue" : 109
+    "MinValue" : NJS_TYPE_STRING,
+    "MaxValue" : NJS_TYPE_NULL
 };
 
 /* njsBuffer */
@@ -99,16 +111,15 @@ var njsTypeEnum = {
 class njsBuffer {
    
     constructor(nInitCapacity = null) {
-        this._initialCapacity = 1024;
-        this._initialGrowSize = 1024; 
-        this._capacity = nInitCapacity ? nInitCapacity :  this._initialGrowSize;
+        this._initialCapacity = 1000000;//1024;
+        //this._initialGrowSize = 1024; 
+        this._capacity = nInitCapacity ? nInitCapacity :  this._initialCapacity;
         this.Clear();  
         this._lendian = true;   
     }
 
     Clear() {
         this._size = 0;
-        //console.log("this._capacity = ", this._capacity);
         this._buf = new ArrayBuffer(this._capacity);
         this._ptrW = 0; // write pointer
         this._ptrR = 0; // read pointer
@@ -131,10 +142,13 @@ class njsBuffer {
             return "Null";
         }
         var type_of = typeof val;
+        //console.log("type_of = ", type_of);
+        
         if (type_of === "string") {
             return "String";
         } else if (type_of === "number") {
-            if (Number.isInteger(val)) {
+            //if (Number.isInteger(val)) {
+            if (Number.isSafeInteger(val)) {    
                 if (val >= -128 && val <= 127) {
                     return "Int8";
                 } else if (val >= -32768 && val <= 32767) {
@@ -143,46 +157,62 @@ class njsBuffer {
                     return "Int32";
                 } else if (val >= -9223372036854775808 && val <= 9223372036854775807) {
                     return "Int64";
+                } else {
+                    console.log("not found int ", val);
                 }
+            } 
+            if (val >= 1.175494351e-38 && val <= 3.402823466e+38)  {
+                return "Float32";
+            } else if (val >= 2.2250738585072014e-308 && val <= 1.7976931348623157e+308) {
+                return "Float64";
             } else {
-                if (val >= 1.175494351e-38 && val <= 3.402823466e+38)  {
-                    return "Float32";
-                } else if (val >= 2.2250738585072014e-308 && val <= 1.7976931348623158e+308) {
-                    return "Float64";
-                }
-            }
-
+                console.log("not found float ", val);
+            }    
         }
         return "Null";
     }
 
-    Write(val) {
-        var type = this.GetType(val);
-        switch (njsTypeEnum[type] ) {
+    Write(val, type_arg) {
+        var type = type_arg;
+        if (typeof type_arg === "string") {
+            type = njsTypeEnum[type_arg];
+        }
+
+        switch (type) {
         case njsTypeEnum["String"]: return this.WriteString(val);
         case njsTypeEnum["Int8"]: return this.WriteInt8(val);
         case njsTypeEnum["Int16"]: return this.WriteInt16(val);
         case njsTypeEnum["Int32"]: return this.WriteInt32(val);
         case njsTypeEnum["Int64"]: return this.WriteInt64(val);
+        case njsTypeEnum["Float32"]: return this.WriteFloat32(val);
+        case njsTypeEnum["Float64"]: return this.WriteFloat64(val);          
         case njsTypeEnum["Bool"]: return this.WriteBool(val);
         case njsTypeEnum["Binary"]: return this.WriteBinary(val);
         case njsTypeEnum["Null"]: return this.WriteNull(val);
         }
+        throw Error("Write Not found type_arg '" + type_arg +"', type  '" + type +"'");
+        //return  false;
     }
 
-    Read(val) {
-        var type = this.GetType(val);
-        switch (njsTypeEnum[type] ) {
+    Read(type_arg) {
+        var type = type_arg;
+        if (typeof type_arg === "string") {
+            type = njsTypeEnum[type_arg];
+        }
+        switch (type ) {
         case njsTypeEnum["String"]: return this.ReadString();
         case njsTypeEnum["Int8"]: return this.ReadInt8();
         case njsTypeEnum["Int16"]: return this.ReadInt16();
         case njsTypeEnum["Int32"]: return this.ReadInt32();
         case njsTypeEnum["Int64"]: return this.ReadInt64();
+        case njsTypeEnum["Float32"]: return this.ReadFloat32();
+        case njsTypeEnum["Float64"]: return this.ReadFloat64();        
         case njsTypeEnum["Bool"]: return this.ReadIntBool();
         case njsTypeEnum["Binary"]: return this.ReadBinary();
-        case njsTypeEnum["Null"]: return this.ReadIntNull();
+        case njsTypeEnum["Null"]: return this.ReadNull();
         }
-        return null;
+        throw Error("Read Not found type_arg '" + type_arg +"', type  '" + type +"'");
+        //return null;
     }
 
     WriteInt8(val) {
@@ -201,14 +231,24 @@ class njsBuffer {
     }
 
     WriteInt64(val) {  
-        this._DataView.setInt64(this._ptrW, val, this._lendian);
+        this._DataView.setFloat64(this._ptrW, val, this._lendian);
         this._ptrW += 8; 
     }
 
-    ReadInt32() {
-        var val = this._DataView.getInt32(this._ptrR, this._lendian);
-        this._ptrR += 4; 
-        return val;
+    WriteFloat32(val) { 
+        console.log("WriteFloat32 ", val);  
+        this._DataView.setFloat32(this._ptrW, val, this._lendian);
+        this._ptrW += 4; 
+    }
+
+    WriteFloat64(val) {  
+        console.log("WriteFloat64 ", val);  
+        this._DataView.setFloat64(this._ptrW, val, this._lendian);
+        this._ptrW += 8; 
+    }
+
+    WriteNull(val = null) {  
+        return true;
     }    
 
     WriteString(str16) {
@@ -220,6 +260,45 @@ class njsBuffer {
         this._ptrW += len;
     }
 
+    ReadInt8() {
+        var val = this._DataView.getInt8(this._ptrR, this._lendian);
+        this._ptrR += 1; 
+        return val;
+    }     
+
+    ReadInt16() {
+        var val = this._DataView.getInt16(this._ptrR, this._lendian);
+        this._ptrR += 2; 
+        return val;
+    } 
+
+    ReadInt32() {
+        var val = this._DataView.getInt32(this._ptrR, this._lendian);
+        this._ptrR += 4; 
+        return val;
+    }    
+
+    ReadInt64() {
+        var val = this._DataView.getFloat64(this._ptrR, this._lendian);
+        this._ptrR += 8; 
+        return val;
+    } 
+    ReadFloat32() {
+        var val = this._DataView.getFloat32(this._ptrR, this._lendian);
+        this._ptrR += 4; 
+        return val;
+    }    
+
+    ReadFloat64() {
+        var val = this._DataView.getFloat64(this._ptrR, this._lendian);
+        this._ptrR += 8; 
+        return val;
+    } 
+
+    ReadNull() {
+        return null;
+    }  
+    
     ReadString() {
         var len = this.ReadInt32();
         var str8 = this._arUint8.subarray(this._ptrR, this._ptrR + len);
@@ -266,7 +345,7 @@ const njsNode_hndl =
         } else {
             //console.log("not found property " + name);
             if (name === "item") {
-                target.child("item_" + target._itemCount++, val, true);
+                target.child("item", val, true);
             } else {
                 target.child(name, val); 
             }            
@@ -293,9 +372,17 @@ class njsNode {
         this._type = "Null";
         this._childs = [];
         this.value = null;
-        this._itemCount = 0;
     }
 
+    get childs ()
+    {
+        return this._childs;
+    }
+
+    set childs (val)
+    {
+        
+    }
 
     // Private
     // get last node
@@ -433,12 +520,51 @@ class njsNode {
         }
     }
      
-    WriteoBuffer(oBuf = null) {
+    WriteToBuffer(oBuf = null) {
+
         if (!oBuf) {
             oBuf = new njsBuffer();            
+        }            
+        console.log("save for ", this.key_name);
+        oBuf.Write(this.key_name, "String"); // write key name
+        oBuf.Write(njsTypeEnum[this._type], "Int8");          
+        oBuf.Write(this.value, this._type); // write value 
+        oBuf.Write(this._childs.length, "Int32");   
+        for (var i = 0; i < this._childs.length; ++i) {
+            this._childs[i].WriteToBuffer(oBuf);                
         }
+      
+
+
         return oBuf;
     }
+    _getTypeStr(typeInt)
+    {
+        var typeStr = null;
+        for(var key in njsTypeEnum){
+            if (typeInt === njsTypeEnum[key]){
+                typeStr = key;
+                break;
+            }
+        }
+        if (!typeStr)
+            throw Error("Not found key for '" + typeInt + "'");
+        return typeStr;
+    }
+
+    ReadFromBuffer(oBuf) {
+        this.key_name = oBuf.Read("String"); 
+        var typeInt = oBuf.Read("Int8");
+        this._type = this._getTypeStr(typeInt);
+        console.log("read type ", this._type);
+        this.value = oBuf.Read(typeInt); 
+        var nChilds = oBuf.Read("Int32"); 
+        for (var i = 0; i < nChilds; ++i) {
+            var newNode = new njsNode();
+            newNode.ReadFromBuffer(oBuf);
+            this._childs.push(newNode);
+        }
+    }   
 }
 
 
@@ -478,6 +604,7 @@ function NotJson(key_name) {
 
 module.exports = {
     NotJson,
-    njsNode
+    njsNode,
+    njsBuffer
 };
 

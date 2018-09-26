@@ -3,7 +3,13 @@
 
 # Why use NotJson?
 In Json, each node can be a real value - String, Number, Bool and another object or Array.
-In NotJson, each node contains Only real values!
+
+In NotJson: 
+- Each node contains Only real values.
+- Multidimensional associative array.
+- Transmitted data  on the network in Binary form.
+- Do not waste resources on parsing.
+- Store binary data in tree node.
 
 Base element of NotJson - **njsNode** object.
 

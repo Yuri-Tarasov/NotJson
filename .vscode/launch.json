@@ -1,0 +1,27 @@
+/*
+ * Project: NotJson (https://github.com/Yuri-Tarasov/NotJson)
+ * Version: v1.23
+ * File: launch.json
+ * Created Date: Wednesday September 26th 2018
+ * Author: Yuri Tarasov
+ * -----
+ * Last Modified: Wednesday September 26th 2018 13:22 
+ * Modified By: the developer formerly known as Yuri Tarasov at <you@you.you>
+ * -----
+ * Copyright (c) 2018 Your Company
+ */
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Запустить программу",
+            //"program": "${workspaceFolder}\\..\\test\\test.js"
+            "program": "C:\\home\\Yuri\\Projects\\NotJson\\test\\test.js"
+        }
+    ]
+}

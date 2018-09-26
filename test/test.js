@@ -107,23 +107,24 @@ root["Models"] = "Comment for group Models";
 root["Models"]["BMW"] = "Comment for group Models/BMW";
 
 // use reserved key - "item" for append to end
-root["item"] = "value for item first";  
+root["item"] = "value for item first";  // add String
 root["item"] = "value for item second";  
+root["item"] = 32767; // add Int16   
+root["item"] = 32768; // add Int32   
+root["item"] = 2147483647; // add Int32   
+root["item"] = 2147483648; // add Int64   
+root["item"] = 3.14; // add Float32   
+root["item"] = 3.402823466e+39 + 1.2e+39; // add Float64   
 
-console.log(root);
+
 console.log(root.toString(0, false)); // do not show [type] 
+console.log(root);
 
-var buf = root.WriteoBuffer();
+var buf = root.WriteToBuffer();
 
-var m = "Чтение: ";
-for (var i = 0; i < 10; ++i)
-{
-    buf.WriteInt32(i + 30);    
-    buf.WriteString("strЯ_" + i);
+var rootRet = new NotJson.njsNode();
+rootRet.ReadFromBuffer(buf);
 
-    var n = buf.ReadInt32();
-    console.log(m, n);
-    var str = buf.ReadString();
-    console.log("str = ", str);
-}
+console.log(rootRet);
+//console.log(buf);
 
