@@ -2,7 +2,7 @@
 **NotJson** is a Tree like data structure with binary serialization to socket or file! 
 
 ### Why use NotJson?
-In Json, each node can be a real value - String, Number, Bool and another object or Array.
+In Json, each node can be a real value - String, Number, Bool and another Object or Array.
 
 **In NotJson:** 
 - Each node contains Only real values.
@@ -44,10 +44,11 @@ root["item"] = 32767; // add Int16
 root["item"] = 32768; // add Int32   
 root["item"] = 2147483647; // add Int32   
 root["item"] = 2147483648; // add Int64   
+
 root["Float data"]["item"] = 3.14; // add Float32   
 root["Float data"]["item"] = 3.402823466e+39 + 1.2e+39; // add Float64 
 
-console.log(root.toString(0, false)); // do not show [type] 
+console.log(root); // do not show [type] 
 ```
 ### Result
 ```text

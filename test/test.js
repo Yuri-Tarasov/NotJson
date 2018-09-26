@@ -115,6 +115,7 @@ root["item"] = 2147483648; // add Int64
 root["Float data"]["item"] = 3.14; // add Float32   
 root["Float data"]["item"] = 3.402823466e+39 + 1.2e+39; // add Float64  
 
+root["Models"]["Жигули"]["Веста"] = "Это тоже машина";
 
 console.log(root.toString(0, false)); // do not show [type] 
 console.log(root);
@@ -124,7 +125,12 @@ root.WriteToBuffer(buf);
 
 var rootRet = new NotJson.njsNode();
 var bRet = rootRet.ReadFromBuffer(buf);
-console.log("bRet = ", bRet);
+console.log("\x1b[43m", "Read from buffer ", bRet);
 console.log(rootRet);
-//console.log(buf);
 
+console.log("\x1b[43m", "Save to file");
+rootRet.SaveToFile("./test.dat");
+
+console.log("\x1b[43m", "Load from file");
+rootRet.LoadFromFile("./test.dat");
+console.log(rootRet);
