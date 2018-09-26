@@ -119,12 +119,18 @@ class njsBuffer {
     }
 
     Clear() {
-        this._size = 0;
         this._buf = new ArrayBuffer(this._capacity);
-        this._ptrW = 0; // write pointer
-        this._ptrR = 0; // read pointer
+        this.ResetPtrWrite();  // write pointer
+        this.ResetPtrRead(); // read pointer
         this._DataView = new DataView(this._buf);
         this._arUint8 = new Uint8Array(this._buf);
+    }
+
+    ResetPtrRead(){
+        this._ptrR = 0;
+    }
+    ResetPtrWrite(){
+        this._ptrW = 0;
     }
 
     // return count byte
@@ -236,18 +242,16 @@ class njsBuffer {
     }
 
     WriteFloat32(val) { 
-        console.log("WriteFloat32 ", val);  
         this._DataView.setFloat32(this._ptrW, val, this._lendian);
         this._ptrW += 4; 
     }
 
     WriteFloat64(val) {  
-        console.log("WriteFloat64 ", val);  
         this._DataView.setFloat64(this._ptrW, val, this._lendian);
         this._ptrW += 8; 
     }
 
-    WriteNull(val = null) {  
+    WriteNull() {  
         return true;
     }    
 
@@ -520,23 +524,24 @@ class njsNode {
         }
     }
      
-    WriteToBuffer(oBuf = null) {
-
-        if (!oBuf) {
-            oBuf = new njsBuffer();            
-        }            
-        console.log("save for ", this.key_name);
-        oBuf.Write(this.key_name, "String"); // write key name
-        oBuf.Write(njsTypeEnum[this._type], "Int8");          
-        oBuf.Write(this.value, this._type); // write value 
-        oBuf.Write(this._childs.length, "Int32");   
-        for (var i = 0; i < this._childs.length; ++i) {
-            this._childs[i].WriteToBuffer(oBuf);                
+    WriteToBuffer(oBuf) {
+        try {
+            if (oBuf._ptrW === 0) {
+                // write riff header           
+            }            
+            //console.log("save for ", this.key_name);
+            oBuf.Write(this.key_name, "String"); // write key name
+            oBuf.Write(njsTypeEnum[this._type], "Int8");          
+            oBuf.Write(this.value, this._type); // write value 
+            oBuf.Write(this._childs.length, "Int32");   
+            for (var i = 0; i < this._childs.length; ++i) {
+                this._childs[i].WriteToBuffer(oBuf);                
+            }
+        } catch(e) {
+            console.error(e.stack);
+            return false;
         }
-      
-
-
-        return oBuf;
+        return true;
     }
     _getTypeStr(typeInt)
     {
@@ -553,17 +558,25 @@ class njsNode {
     }
 
     ReadFromBuffer(oBuf) {
-        this.key_name = oBuf.Read("String"); 
-        var typeInt = oBuf.Read("Int8");
-        this._type = this._getTypeStr(typeInt);
-        console.log("read type ", this._type);
-        this.value = oBuf.Read(typeInt); 
-        var nChilds = oBuf.Read("Int32"); 
-        for (var i = 0; i < nChilds; ++i) {
-            var newNode = new njsNode();
-            newNode.ReadFromBuffer(oBuf);
-            this._childs.push(newNode);
+        try {
+            this.key_name = oBuf.Read("String"); 
+            var typeInt = oBuf.Read("Int8");
+            if (typeInt < njsTypeEnum.MinValue  || typeInt > njsTypeEnum.MaxValue ) {
+                throw Error("Bad format");
+            }
+            this._type = this._getTypeStr(typeInt);            
+            this.value = oBuf.Read(typeInt); 
+            var nChilds = oBuf.Read("Int32"); 
+            for (var i = 0; i < nChilds; ++i) {
+                var newNode = new njsNode();
+                newNode.ReadFromBuffer(oBuf);
+                this._childs.push(newNode);
+            }
+        } catch(e) {
+            console.error(e.stack);
+            return false;
         }
+        return true;
     }   
 }
 

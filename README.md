@@ -1,7 +1,7 @@
 # NotJson
 **NotJson** is a Tree like data structure with binary serialization to socket or file! 
 
-# Why use NotJson?
+### Why use NotJson?
 In Json, each node can be a real value - String, Number, Bool and another object or Array.
 
 In NotJson: 

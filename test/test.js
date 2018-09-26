@@ -120,11 +120,12 @@ root["item"] = 3.402823466e+39 + 1.2e+39; // add Float64
 console.log(root.toString(0, false)); // do not show [type] 
 console.log(root);
 
-var buf = root.WriteToBuffer();
+var buf = new NotJson.njsBuffer();
+root.WriteToBuffer(buf);
 
 var rootRet = new NotJson.njsNode();
-rootRet.ReadFromBuffer(buf);
-
+var bRet = rootRet.ReadFromBuffer(buf);
+console.log("bRet = ", bRet);
 console.log(rootRet);
 //console.log(buf);
 
