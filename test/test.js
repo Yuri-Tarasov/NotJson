@@ -59,17 +59,16 @@ for (var node_1 of root) {
 }
 
 console.log("");
-console.log("Hand Iterations recursive all tree"); // test againe 
+console.log("Iterations for all tree"); // test againe 
 console.log("");
 
-function ReursIterat(node, level = 0) {
+function RecursIterat(node, level = 0) {
     console.log("  ".repeat(level) + node.key_name + ": " + node.value);
     for (var node_child of node) {
-        ReursIterat(node_child, level + 1);
+        RecursIterat(node_child, level + 1);
     }
 }
-
-ReursIterat(root);
+RecursIterat(root);
 
 // init object;
 var myObj = {

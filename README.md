@@ -74,9 +74,18 @@ Cars:  [Null]
     item: 3.140000104904175 [Float32]
     item: 4.602823466e+39 [Float64]
 ```
+### Iteration for all tree
+```
+function RecursIterat(node, level = 0) {
+    console.log("  ".repeat(level) + node.key_name + ": " + node.value);
+    for (var node_child of node) {
+        RecursIterat(node_child, level + 1);
+    }
+}
 
+RecursIterat(root);
 
-
+```javascript
 
 LICENSE
 =======
