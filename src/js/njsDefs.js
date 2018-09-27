@@ -5,6 +5,7 @@
  * Author: Yuri Tarasov
  */
 
+
 var njsDefs = {
     "NJS_TYPE_STRING" : 100,
     "NJS_TYPE_INT8" :  101,
@@ -15,7 +16,10 @@ var njsDefs = {
     "NJS_TYPE_FLOAT64" :  106,
     "NJS_TYPE_BOOL" :  107,
     "NJS_TYPE_BINARY" :  108,
-    "NJS_TYPE_NULL" :  109
+    "NJS_TYPE_NULL" :  109,
+
+    "NJS_MAX_STRING_CHARS" : 32767,
+    "NJS_MAX_CHILDS" : 0x800000, // 8 388 608
 };
 
 var njsTypeEnum = {

@@ -1,6 +1,6 @@
 
 
-
+console.log("Start Test");
 //import njsNode from '../src/js/NotJson.js';
 const NotJson = require("../src/js/NotJson.js");
 
@@ -115,7 +115,7 @@ root["item"] = 2147483648; // add Int64
 root["Float data"]["item"] = 3.14; // add Float32   
 root["Float data"]["item"] = 3.402823466e+39 + 1.2e+39; // add Float64  
 
-root["Models"]["Жигули"]["Веста"] = "Это тоже машина";
+root["Models"]["Жигули"]["Веста"] = "Это тоже машина!";
 
 console.log(root.toString(0, false)); // do not show [type] 
 console.log(root);
@@ -128,9 +128,18 @@ var bRet = rootRet.ReadFromBuffer(buf);
 console.log("\x1b[43m", "Read from buffer ", bRet);
 console.log(rootRet);
 
+/* 
+for (var i = 0; i < 1000; ++i)
+{
+    rootRet["item"] = "sss_" + i;
+} 
+*/
+
 console.log("\x1b[43m", "Save to file");
 rootRet.SaveToFile("./test.dat");
 
 console.log("\x1b[43m", "Load from file");
 rootRet.LoadFromFile("./test.dat");
 console.log(rootRet);
+
+console.log("End Test");

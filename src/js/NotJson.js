@@ -6,7 +6,7 @@
  */
 
 const {njsBuffer} = require("./njsBuffer.js");
-const { njsTypeEnum} = require("./njsDefs.js");
+const { njsTypeEnum, njsDefs} = require("./njsDefs.js");
 
 
 
@@ -229,9 +229,15 @@ class njsNode {
             oBuf.Write(this.key_name, "String"); // write key name
             oBuf.Write(njsTypeEnum[this._type], "Int8");          
             oBuf.Write(this.value, this._type); // write value 
+            if (this._childs.length > njsDefs.NJS_MAX_CHILDS) {
+                throw Error("Too many childs! Max childs is: " + njsDefs.NJS_MAX_CHILDS);
+            }
             oBuf.Write(this._childs.length, "Int32");   
             for (var i = 0; i < this._childs.length; ++i) {
-                this._childs[i].WriteToBuffer(oBuf);                
+                var ret = this._childs[i].WriteToBuffer(oBuf); 
+                if (!ret) {
+                    return false;
+                }               
             }
         } catch(e) {
             console.error(e.stack);
@@ -263,6 +269,9 @@ class njsNode {
             this._type = this._getTypeStr(typeInt);            
             this.value = oBuf.Read(typeInt); 
             var nChilds = oBuf.Read("Int32"); 
+            if (nChilds > njsDefs.NJS_MAX_CHILDS) {
+                throw Error("Bad format. Too many childs! Max childs is: " + njsDefs.NJS_MAX_CHILDS);
+            }            
             for (var i = 0; i < nChilds; ++i) {
                 var newNode = new njsNode();
                 var ret = newNode.ReadFromBuffer(oBuf);
@@ -279,29 +288,37 @@ class njsNode {
     }   
 
     SaveToFile (fileName) {
-        var buffer = new njsBuffer();
-        this.WriteToBuffer(buffer);
-        console.log("buffer bytes =  ", buffer._buf.byteLength);
-        require("fs").writeFileSync(fileName, buffer._arUint8);
-        console.log("The file has been saved!");
-        /*
-        require("fs").writeFile(fileName, buffer._buf, (err) => {
-            if (err) throw err;
+        try {
+            var buffer = new njsBuffer();
+            var ret = this.WriteToBuffer(buffer);
+            if (!ret) {
+                return false;
+            }
+
+            require("fs").writeFileSync(fileName, buffer._arUint8.subarray(0, buffer.size));
             console.log("The file has been saved!");
-        });
-        */
+        } catch(e) {
+            console.error(e.stack);
+            return false;
+        }
         return true;
     }
 
 
     LoadFromFile (fileName) {
-        this.Clear();
-        var contents = require("fs").readFileSync(fileName);
-        console.log("The file has been loaded!");
+        try {
+            this.Clear();
+            var contents = require("fs").readFileSync(fileName);
+            console.log("The file has been loaded!");
 
-        var arrayBuffer = new Uint8Array(contents).buffer;
-        var buffer = new njsBuffer(arrayBuffer);
-        return this.ReadFromBuffer(buffer);    
+            var arrayBuffer = new Uint8Array(contents).buffer;
+            var buffer = new njsBuffer(arrayBuffer);
+            this.ReadFromBuffer(buffer); 
+        } catch(e) {
+            console.error(e.stack);
+            return false;
+        } 
+        return true;  
     }
 }
 

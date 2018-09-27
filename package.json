@@ -1,6 +1,6 @@
 {
   "name": "not-json",
-  "version": "1.0.0",
+  "version": "1.0.12",
   "description": "Tree like data structure with binary serialization to socket or file!",
   "main": "dist/node/NotJson.js",
   "directories": {
@@ -25,5 +25,9 @@
   "bugs": {
     "url": "https://github.com/Yuri-Tarasov/NotJson/issues"
   },
-  "homepage": "https://github.com/Yuri-Tarasov/NotJson#readme"
+  "homepage": "https://github.com/Yuri-Tarasov/NotJson#readme",
+  "dependencies": {
+    "requirejs": "^2.3.6"
+  }
+
 }
