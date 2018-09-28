@@ -143,9 +143,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\..\src\cpp\njsDefs.h" />
+    <ClInclude Include="..\..\..\..\src\cpp\njsNode.h" />
     <ClInclude Include="..\..\..\..\src\cpp\njsValue.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\src\cpp\njsNode.cpp" />
     <ClCompile Include="..\..\..\..\src\cpp\njsValue.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

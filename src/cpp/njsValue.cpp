@@ -25,7 +25,7 @@ njsTypeEnum njsValue::GetType()
     return m_enType;
 }
 
-std::string njsValue::GetString()
+std::string njsValue::ToString()
 {
     std::string sRet;
     switch (m_enType) {

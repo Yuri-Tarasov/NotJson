@@ -2,7 +2,7 @@
 
 console.log("Start Test");
 //import njsNode from '../src/js/NotJson.js';
-const NotJson = require("../src/js/NotJson.js");
+const NotJson = require("../../src/js/NotJson.js");
 
 //njsNode.debug = true;
 

@@ -7,12 +7,13 @@
 
 class njsValue
 {
+	friend class njsNode;
 public:
     njsValue();
     ~njsValue();
     void _Clear();
     njsTypeEnum GetType();
-    std::string GetString();
+    std::string ToString();
 
     void operator= (const int8_t& val);
     void operator= (const int16_t& val);
