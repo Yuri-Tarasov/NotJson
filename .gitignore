@@ -32,7 +32,13 @@
 *.app
 *.dat
 
+*.opendb
+*.db
+.vs
+
 node_modules/*
 VSCode/*
 .eslintrc.js
 .vscode
+**/x64
+

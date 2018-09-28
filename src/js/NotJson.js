@@ -19,6 +19,7 @@ const njsNode_hndl =
     "get": function (target, name) {
         var type = typeof name;
         if (type !== "string") {
+            //console.log("ret symbol " + name.toString());
             return target[name];
         }
 
@@ -181,6 +182,8 @@ class njsNode {
         return this.toString();
     }
 
+  
+
     [Symbol.iterator]() {
         var arChilds = this._childs;
         return {
@@ -325,7 +328,7 @@ class njsNode {
 
 njsNode.prototype.InitFormObj = function (objInit, node = null) {
     if (!node) {
-        console.log("start init fron obj");
+        console.log("start init from obj");
         node = this;
         node.Clear();
         node.key_name = K_ROOT_NAME;
