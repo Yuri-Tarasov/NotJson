@@ -11,24 +11,24 @@ const NotJson = require("../../src/js/NotJson.js");
 var root = new NotJson.njsNode();
 var node;
 
-root.child("Node_1", "27").child("Node_1_1", "dd");
+root.GetOrMakeChild("Node_1", "27").GetOrMakeChild("Node_1_1", "dd");
 
-node = root.child("Node_2", "88"); // set string
+node = root.GetOrMakeChild("Node_2", "88"); // set string
 
-node._("Node_2_2")._("Node_2_2_2", "99_2"); // short alias for .child()
+node["Node_2_2"]["Node_2_2_2", "99_2"]; // short alias for .GetOrMakeChild()
 
-node.child("Node_3_0", 33); // set int
-node.child("Node_3_0", 333); // replace exists item 
+node.GetOrMakeChild("Node_3_0", 33); // set int
+node.GetOrMakeChild("Node_3_0", 333); // replace exists item 
 
-//root.child("Node_2").child("Node_2_2", "000"); // replace exists item fro null -> "000"
-root.child("Node_1", "77_new", true); // add new item in tail
-root.child("Node_1", null, true); // add new item in tail
-root.child("Node_1", "", true); // add new item in tail
+//root.GetOrMakeChild("Node_2").GetOrMakeChild("Node_2_2", "000"); // replace exists item fro null -> "000"
+root.GetOrMakeChild("Node_1", "77_new", true); // add new item in tail
+root.GetOrMakeChild("Node_1", null, true); // add new item in tail
+root.GetOrMakeChild("Node_1", "", true); // add new item in tail
 
 root["sss"] = 9.6; // set float
 root["sss2"]["sss2_2"]["sss2_2_3"] = "rrr";
 root[""] = "nn"; // empty key_name -> NoName
-root.child(null, "nn2", true);// null key_name -> NoName
+root.GetOrMakeChild(null, "nn2", true);// null key_name -> NoName
 root["last"] = 5;
 root["last"].value += 9; // must value -> 14
 

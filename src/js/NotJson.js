@@ -32,25 +32,18 @@ const njsNode_hndl =
 
         }
         //console.log("get " + name );
-        return  target.child(name); 
+        return  target.GetOrMakeChild(name); 
     },
 
     "set": function (target, name, val) {
 
         //console.log("f set(" + target.key_name + ") " + name + " = " + val);
-        if (name === "value") {
-            target._type = njsBuffer.GetType(val);
-        }
+
         if (name in target) {
             target[name] = val;
         } else {
             //console.log("not found property " + name);
-            if (name === "item") {
-                target.child("item", val, true);
-            } else {
-                target.child(name, val); 
-            }            
-            
+            target.GetOrMakeChild(name, val); 
         }
         return true;
     },
@@ -72,7 +65,18 @@ class njsNode {
         this.key_name = key_name ? key_name : K_ROOT_NAME;
         this._type = "Null";
         this._childs = [];
-        this.value = null;
+        this._value = null;
+    }
+
+    get value ()
+    {
+        return this._value;
+    }
+    
+    set value (val)
+    {
+        this._type = njsBuffer.GetType(val);
+        this._value = val;
     }
 
     get childs ()
@@ -98,6 +102,9 @@ class njsNode {
     // Private
     // make last node
     _makeLast(key_name) {
+        if (!key_name) {
+            key_name = K_NO_NAME;
+        }           
         var id = this._childs.length;
         var node = new njsNode(key_name);
         this._childs[id] = node;
@@ -115,23 +122,20 @@ class njsNode {
         return node;
     }
 
-    _getOrMakeChild(key_name) {
-        var node = this._getChild(key_name);
-        if (!node) {
-            node = this._makeLast(key_name);
+    AddChild(key_name, value) {
+        var node = this._makeLast(key_name);
+        if (typeof type !== "undefined") {
+            //console.log("type = ", type, ", val ", value);
+            node.value = value;
         }
         return node;
     }
 
-    child(key_name, value, bAllowDuplicate = false) {
-        if (!key_name) {
-            key_name = K_NO_NAME;
-        }
-        var node = null;
-        if (bAllowDuplicate) {
+    GetOrMakeChild(key_name, value) {
+
+        var node = this._getChild(key_name);
+        if (!node) {
             node = this._makeLast(key_name);
-        } else {
-            node = this._getChild(key_name);
         }
         var type = typeof value;
         if (value === null) {
@@ -153,10 +157,6 @@ class njsNode {
         return node;
     }
 
-    // short alias for .child()
-    _(key_name, value, bAllowDuplicate = false) {
-        return this.child(key_name, value, bAllowDuplicate);
-    }
 
     toString(n = 0, bSowType = true) {
         var str = "";
@@ -270,7 +270,7 @@ class njsNode {
                 throw Error("Bad format");
             }
             this._type = this._getTypeStr(typeInt);            
-            this.value = oBuf.Read(typeInt); 
+            this._value = oBuf.Read(typeInt); 
             var nChilds = oBuf.Read("Int32"); 
             if (nChilds > njsDefs.NJS_MAX_CHILDS) {
                 throw Error("Bad format. Too many childs! Max childs is: " + njsDefs.NJS_MAX_CHILDS);
@@ -336,13 +336,13 @@ njsNode.prototype.InitFormObj = function (objInit, node = null) {
     if (Array.isArray(objInit)) {
         for (var i = 0; i < objInit.length; ++i) {
             var item = objInit[i];
-            this.InitFormObj(item, node.child("item_" + i, null, true));
+            this.InitFormObj(item, node.AddChild("item" , null));
         }
     }
     else if (typeof (objInit) === "object") {
         for (var prop in objInit) {
             //console.log("prop", prop);
-            this.InitFormObj(objInit[prop], node.child(prop, null, true));
+            this.InitFormObj(objInit[prop], node.AddChild(prop, null));
         }
     } else {
         node.value = objInit;
