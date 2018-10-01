@@ -23,15 +23,12 @@ const njsNode_hndl =
             return target[name];
         }
 
+        //console.log("get " + name );
+     
         if (name in target) {
             //console.log("ret ext " + name);
             return target[name];
-        }
-        if (name === "item") {
-            throw("Reserved key - 'item', use this for only push node to end");
-
-        }
-        //console.log("get " + name );
+        } 
         return  target.GetOrMakeChild(name); 
     },
 

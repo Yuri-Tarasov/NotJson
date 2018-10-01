@@ -37,16 +37,16 @@ root["Models"]["Fiat"]["Panda"] = "Comment for Panda";
 root["Models"] = "Comment for group Models";
 root["Models"]["BMW"] = "Comment for group Models/BMW";
 
-// use reserved key - "item" for append to end
-root["item"] = "value for item first";  // add String
-root["item"] = "value for item second";  
-root["item"] = 32767; // add Int16   
-root["item"] = 32768; // add Int32   
-root["item"] = 2147483647; // add Int32   
-root["item"] = 2147483648; // add Int64   
+// use AddChild for append to end
+root.AddChild("item").value = "value for item first";  // add String
+root.AddChild("item").value = "value for item second";  
+root.AddChild("item").value = 32767; // add Int16   
+root.AddChild("item").value = 32768; // add Int32   
+root.AddChild("item").value = 2147483647; // add Int32   
+root.AddChild("item").value = 2147483648; // add Int64   
 
-root["Float data"]["item"] = 3.14; // add Float32   
-root["Float data"]["item"] = 3.402823466e+39 + 1.2e+39; // add Float64 
+root["Float data"].AddChild("item").value= 3.14; // add Float32   
+root["Float data"].AddChild("item").value = 3.402823466e+39 + 1.2e+39; // add Float64 
 
 console.log(root); // do not show [type] 
 ```

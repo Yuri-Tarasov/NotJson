@@ -32,10 +32,16 @@ root.GetOrMakeChild(null, "nn2", true);// null key_name -> NoName
 root["last"] = 5;
 root["last"].value += 9; // must value -> 14
 
-root["item"] = 3; // if use key 'item' -> push end node, will be rename to -> item_0
-root["item"] = 5; // append to back new node  will be rename to -> item_1
-root["item"] = 7; // append to back new node  will be rename to -> item_2
-//root["item"].value += 9; // throw
+root.AddChild("item").value = "value for item first";  // add String
+root.AddChild("item").value = "value for item second";  
+root.AddChild("item").value = 32767; // add Int16   
+root.AddChild("item").value = 32768; // add Int32   
+root.AddChild("item").value = 2147483647; // add Int32   
+root.AddChild("item").value = 2147483648; // add Int64   
+
+root["Float data"].AddChild("item").value= 3.14; // add Float32   
+root["Float data"].AddChild("item").value = 3.402823466e+39 + 1.2e+39; // add Float64 
+
 
 
 
