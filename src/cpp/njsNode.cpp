@@ -35,6 +35,9 @@ njsNode::~njsNode()
 njsNode & njsNode::operator[](const std::string & sKeyName)
 {
 	//std::cout << "njsNode::operator['" << sKeyName << "'])\n";
+	if (m_enChildType == njsChildTypeEnum::Array) {
+		return AddChild(sKeyName);
+	} 
 	return _GetChild(sKeyName);
 }
 
@@ -155,6 +158,8 @@ njsNode::GetOrMakeChild(const std::string & sKeyName, const njsChildTypeEnum& en
     return _GetChild(sKeyName, enChildType);
 }
 
+
+
 njsNode&
 njsNode::_GetChild(const std::string & sKeyName, const njsChildTypeEnum& enChildType /* def Object*/)
 {
@@ -181,3 +186,64 @@ njsNode::IsChildExists(const std::string& sKeyName)
 }
 
 
+bool njsNode::SaveToFile(const std::string & sFileName)
+{
+	return true;
+}
+
+bool njsNode::LoadFromFile(const std::string & sFileName)
+{
+	return true;
+}
+
+bool njsNode::WriteToBuffer(njsBuffer & oBuf)
+{
+	oBuf.Write(m_sKeyName); // write key name
+	int8_t nType = (int8_t)m_oValue.m_enType;
+	oBuf.Write(nType); // type
+	oBuf.Write(m_oValue); // write value 
+	//if (m_vChild.size() > NJS_MAX_CHILDS) {
+	//	throw Error("Too many childs! Max childs is: " + NJS_MAX_CHILDS);
+	//}
+	int32_t nSize = (int32_t)m_vChild.size();
+	oBuf.Write(nSize);
+	for (int32_t i = 0; i < nSize; ++i) {
+		bool ret = m_vChild[i].WriteToBuffer(oBuf);
+		if (!ret) {
+			return false;
+		}
+	}
+	return true;
+}
+
+bool njsNode::ReadFromBuffer(njsBuffer & oBuf)
+{
+	bool ret = oBuf.ReadString(m_sKeyName);
+	if (!ret) {
+		return false;
+	}
+	int nType = oBuf.ReadInt8();
+	if (nType < int(njsTypeEnum::MinValue) || nType > int(njsTypeEnum::MaxValue)) {
+		NJS_LOG_ERR ("Bad format");
+		NJS_LOG_ERR("nType = " << nType);
+		return false;
+	}	
+	m_oValue.m_enType = (njsTypeEnum)nType;
+	ret = oBuf.Read(m_oValue);
+	if (!ret) {
+		return false;
+	}
+	int32_t nChilds = oBuf.ReadInt32();
+	if (nChilds > NJS_MAX_CHILDS) {
+		NJS_LOG_ERR("Bad format. Too many childs! Max childs is: " << NJS_MAX_CHILDS);
+		return false;
+	}
+	for (int32_t i = 0; i < nChilds; ++i) {
+		njsNode& newNode = _MakeNode("");
+		ret = newNode.ReadFromBuffer(oBuf);
+		if (!ret) {
+			return false;
+		}
+	}
+	return true;
+}

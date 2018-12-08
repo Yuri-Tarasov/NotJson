@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-
+#include "njsBuffer.h"
 #include "njsValue.h"
 
 class njsNode
@@ -26,6 +26,13 @@ public:
     std::vector<njsNode>& GetChilds() {return m_vChild;}
     const std::string& GetKeyName() {return m_sKeyName;}
     njsValue& GetValue() {return m_oValue;}
+
+	// Serialize
+	bool SaveToFile(const std::string& sFileName);
+	bool LoadFromFile(const std::string& sFileName);
+	bool WriteToBuffer(njsBuffer& oBuf);
+	bool ReadFromBuffer(njsBuffer& oBuf);
+
 private:
     njsNode& _GetChild(const std::string& sKeyName, const njsChildTypeEnum& enChildType = njsChildTypeEnum::Object);
 	void _ToString(int nLevel, std::string& sRet);

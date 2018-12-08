@@ -20,7 +20,7 @@ void njsValue::_Clear()
 }
 
 
-njsTypeEnum njsValue::GetType()
+njsTypeEnum njsValue::GetType() const
 {
     return m_enType;
 }

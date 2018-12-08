@@ -8,11 +8,12 @@
 class njsValue
 {
 	friend class njsNode;
+	friend class njsBuffer;
 public:
     njsValue();
     ~njsValue();
     void _Clear();
-    njsTypeEnum GetType();
+    njsTypeEnum GetType() const;
     std::string ToString();
 
     void operator= (const int8_t& val);

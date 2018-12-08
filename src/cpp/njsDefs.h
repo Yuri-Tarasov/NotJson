@@ -2,7 +2,7 @@
 
 #include <cinttypes>
 #include <string>
-
+#include <iostream>
 
 
 
@@ -17,7 +17,7 @@
 #define NJS_TYPE_BINARY 108
 #define NJS_TYPE_NULL 109
 
-#define NJS_MAX_STRING_CHARS =  32767
+#define NJS_MAX_STRING_CHARS 32767
 #define NJS_MAX_CHILDS 0x800000 // 8 388 608
 
 
@@ -42,13 +42,34 @@ enum  class njsTypeEnum : int8_t {
 };
 
 // type for chil
-enum  class njsChildTypeEnum : int16_t {
-    Object = NJS_CHILD_TYPE_OBJECT,
-    Array = NJS_CHILD_TYPE_ARRAY
+enum  class njsChildTypeEnum : uint8_t {
+	Object = NJS_CHILD_TYPE_OBJECT,
+	Array = NJS_CHILD_TYPE_ARRAY
 };
 
+static
+const char*
+g_fRemovePath(const char* path)
+{
+	const char* pDelimeter = strrchr(path, '\\');
+	if (pDelimeter) {
+		path = pDelimeter + 1;
+		return path;
+	}
+
+	pDelimeter = strrchr(path, '/');
+	if (pDelimeter)
+		path = pDelimeter + 1;
+
+	return path;
+}
+
+#define __FILENAME__ g_fRemovePath(__FILE__)
+
+#define NJS_LOG_ERR(arg) \
+  std::cerr << __FILENAME__ << ": " << __LINE__ << ": " << arg << std::endl;
 
 
-
-#define NJS_DEBUG_LOG 
+#define NJS_LOG_DEBUG(arg) \
+  std::cout <<  __FILENAME__ << ": " << __LINE__ << ": " << arg << std::endl;
 
