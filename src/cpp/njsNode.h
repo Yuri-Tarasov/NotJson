@@ -7,32 +7,43 @@
 class njsNode
 {
 public:
-	njsNode(const std::string& sKeyName);
+    njsNode(const std::string& sKeyName, const njsChildTypeEnum& enChildType = njsChildTypeEnum::Object);
 	~njsNode();
 
 	njsNode& operator[](const std::string& sKeyName);
+    njsNode& GetOrMakeChild(const std::string& sKeyName, const njsChildTypeEnum& enChildType = njsChildTypeEnum::Object);
+    njsNode& AddChild(const std::string& sKeyName, const njsChildTypeEnum& enChildType = njsChildTypeEnum::Object);
+
+    bool IsChildExists(const std::string& sKeyName);
 
 	template<class T>
 	njsNode& operator=(const T& val);
 
 	std::string ToString();
+	std::string ToJson();
+    const njsChildTypeEnum &GetChildType();
 
+    std::vector<njsNode>& GetChilds() {return m_vChild;}
+    const std::string& GetKeyName() {return m_sKeyName;}
+    njsValue& GetValue() {return m_oValue;}
 private:
-	njsNode& _GetChild(const std::string& sKeyName);
+    njsNode& _GetChild(const std::string& sKeyName, const njsChildTypeEnum& enChildType = njsChildTypeEnum::Object);
 	void _ToString(int nLevel, std::string& sRet);
-	njsNode& _MakeNode(const std::string& sKeyName);
+    void _ToJson(int nLevel, std::string& sRet, bool bParentArray);
+    njsNode& _MakeNode(const std::string& sKeyName, const njsChildTypeEnum& enChildType = njsChildTypeEnum::Object);
 
 private:
 	std::string m_sKeyName;
 	njsValue m_oValue;
 	std::vector<njsNode> m_vChild;
+    njsChildTypeEnum  m_enChildType;
 
 };
 
 template<class T>
 inline njsNode & njsNode::operator=(const T & val)
 {
-	std::cout << "njsNode::operator = " << val << "\n";
+	//std::cout << "njsNode::operator = " << val << "\n";
 	m_oValue = val;
 	return *this;
 }

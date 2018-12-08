@@ -17,10 +17,14 @@
 #define NJS_TYPE_BINARY 108
 #define NJS_TYPE_NULL 109
 
-#define NJS_MAX_STRING_CHARS =  32767,
+#define NJS_MAX_STRING_CHARS =  32767
 #define NJS_MAX_CHILDS 0x800000 // 8 388 608
 
 
+#define NJS_CHILD_TYPE_OBJECT 200
+#define NJS_CHILD_TYPE_ARRAY 201
+
+// type for value
 enum  class njsTypeEnum : int8_t {
     String = NJS_TYPE_STRING,
     Int8 = NJS_TYPE_INT8,
@@ -37,22 +41,14 @@ enum  class njsTypeEnum : int8_t {
     MaxValue = NJS_TYPE_NULL
 };
 
-static
-std::string njsGetTypeName(const njsTypeEnum& en) {
-    switch (en) {
-    case njsTypeEnum::String:  return "String";        
-    case njsTypeEnum::Int8:    return "Int8";
-    case njsTypeEnum::Int16:   return "Int16";
-    case njsTypeEnum::Int32:   return "Int32";
-    case njsTypeEnum::Int64:   return "Int64";
-    case njsTypeEnum::Float32: return "Float32";
-    case njsTypeEnum::Float64: return "Float64";
-    case njsTypeEnum::Bool:    return "Bool";
-    case njsTypeEnum::Binary:  return "Binary";
-    case njsTypeEnum::Null:    return "Null";
-    }
-    return "UNDEFINED";
-}
+// type for chil
+enum  class njsChildTypeEnum : int16_t {
+    Object = NJS_CHILD_TYPE_OBJECT,
+    Array = NJS_CHILD_TYPE_ARRAY
+};
+
+
+
 
 #define NJS_DEBUG_LOG 
 

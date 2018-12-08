@@ -109,20 +109,23 @@ void njsValue::operator=(const bool val)
     m_valInt = val ? 1 : 0;
 }
 
+/*
 void njsValue::operator=(const std::vector<int8_t>& val)
 {
     m_enType = njsTypeEnum::Binary;
 
 }
+*/
 
 void njsValue::SetNull()
 {
-    _Clear(); 
+	_Clear();
 }
 
+/*
 void njsValue::SetBinary(const int8_t * pData, const int & nLen)
 {
     m_enType = njsTypeEnum::Binary;
 }
-
+*/
 
