@@ -13,6 +13,8 @@ public:
 	void ResetPtrWrite();
 	void ResetPtrRead();
 
+	void Resize(const uint32_t& newSize);
+
 	bool Write(const njsValue& oVal);
 	bool Write(const int8_t& val);
 	bool Write(const int16_t& val);
@@ -38,8 +40,10 @@ public:
 	bool ReadBinary(std::vector<int8_t>& val);
 	bool ReadNull();
 
+	int8_t* GetData();
+	uint32_t GetDataLen();
+
 private:
-	void _Resize(const uint32_t& newSize);
 	void _CheckSize(const uint32_t& lenAppend);
 
 private:

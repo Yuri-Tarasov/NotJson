@@ -50,6 +50,7 @@ const njsNode_hndl =
 
 };
 
+const inspect = Symbol.for('nodejs.util.inspect.custom');
 
 class njsNode {
     constructor(key_name) {
@@ -175,9 +176,11 @@ class njsNode {
         }
         return str;
     }
-    inspect() {
+	/* for .log out*/
+    [inspect]() {
         return this.toString();
     }
+	
 
   
 
@@ -295,7 +298,9 @@ class njsNode {
                 return false;
             }
 
-            require("fs").writeFileSync(fileName, buffer._arUint8.subarray(0, buffer.size));
+			const fs = require('fs');
+			fs.writeFileSync(fileName, njsDefs.NJS_RIFF);
+            fs.appendFileSync(fileName, buffer._arUint8.subarray(0, buffer.size));
             console.log("The file has been saved!");
         } catch(e) {
             console.error(e.stack);
@@ -308,10 +313,20 @@ class njsNode {
     LoadFromFile (fileName) {
         try {
             this.Clear();
+			var nRiffSize = njsDefs.NJS_RIFF.length;
             var contents = require("fs").readFileSync(fileName);
-            console.log("The file has been loaded!");
+			var sRiff = contents.toString('utf8', 0, nRiffSize);
+            //console.log("The file has been loaded!");
+            //console.log("Riff size:", nRiffSize , "Riff is:", );
+			if (sRiff !== njsDefs.NJS_RIFF)
+			{
+				throw Error("Bad format, wrong RIFF ");
+			}
 
-            var arrayBuffer = new Uint8Array(contents).buffer;
+			var arrayBuffer;
+
+			arrayBuffer = new Uint8Array(contents.slice(nRiffSize)).buffer;
+
             var buffer = new njsBuffer(arrayBuffer);
             this.ReadFromBuffer(buffer); 
         } catch(e) {

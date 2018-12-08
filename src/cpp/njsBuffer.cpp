@@ -5,7 +5,7 @@
 njsBuffer::njsBuffer()
 {
 	Reset();
-	_Resize(1024);
+	Resize(1024);
 }
 
 
@@ -32,7 +32,7 @@ void njsBuffer::ResetPtrRead()
 
 
 void
-njsBuffer::_Resize(const uint32_t& newSize)
+njsBuffer::Resize(const uint32_t& newSize)
 {
 	m_vec.reserve(newSize);
 	m_pData = m_vec.data();
@@ -43,7 +43,7 @@ njsBuffer::_CheckSize(const uint32_t& lenAppend)
 {
 	uint32_t newSize = m_ptrW + lenAppend;
 	if (newSize >= m_vec.capacity()) {
-		_Resize(newSize);
+		Resize(newSize);
 	}
 }
 
@@ -275,6 +275,8 @@ double njsBuffer::ReadDouble()
 bool njsBuffer::ReadString(std::string& val)
 {
 	int32_t nSize = ReadInt32();
+	//NJS_LOG_ERR("ReadString size = " << nSize);
+	
 	if (nSize > NJS_MAX_STRING_CHARS) {
 		NJS_LOG_ERR("Bad format. Too many chars in string! NJS_MAX_STRING_CHARS is : " << NJS_MAX_CHILDS);
 		return false;
@@ -282,7 +284,7 @@ bool njsBuffer::ReadString(std::string& val)
 	val.clear();
 	val.resize(nSize);
 	int8_t* pData = (int8_t*)val.data();
-	memcpy(pData, m_pData + m_ptrR, 8);
+	memcpy(pData, m_pData + m_ptrR, nSize);
 	m_ptrR += nSize;
 	return true;
 }
@@ -299,9 +301,9 @@ bool njsBuffer::ReadBinary(std::vector<int8_t>& val)
 {
 	int32_t nSize = ReadInt32();
 	val.clear();
-	val.reserve(nSize);
+	val.resize(nSize);
 	int8_t* pData = (int8_t*)val.data();
-	memcpy(pData, m_pData + m_ptrR, 8);
+	memcpy(pData, m_pData + m_ptrR, nSize);
 	m_ptrR += nSize;
 	return true;
 }
@@ -309,5 +311,15 @@ bool njsBuffer::ReadBinary(std::vector<int8_t>& val)
 bool njsBuffer::ReadNull()
 {
 	return true;
+}
+
+int8_t * njsBuffer::GetData()
+{
+	return m_pData;
+}
+
+uint32_t njsBuffer::GetDataLen()
+{
+	return m_ptrW;
 }
 

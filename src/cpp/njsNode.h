@@ -9,6 +9,7 @@ class njsNode
 public:
     njsNode(const std::string& sKeyName, const njsChildTypeEnum& enChildType = njsChildTypeEnum::Object);
 	~njsNode();
+	void Clear();
 
 	njsNode& operator[](const std::string& sKeyName);
     njsNode& GetOrMakeChild(const std::string& sKeyName, const njsChildTypeEnum& enChildType = njsChildTypeEnum::Object);

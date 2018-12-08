@@ -121,7 +121,7 @@ root["item"] = 2147483648; // add Int64
 root["Float data"]["item"] = 3.14; // add Float32   
 root["Float data"]["item"] = 3.402823466e+39 + 1.2e+39; // add Float64  
 
-root["Models"]["Жигули"]["Веста"] = "Это тоже машина!";
+root["Models"]["Жигули"]["Веста"] = "Это тоже машина 99999!";
 
 console.log(root.toString(0, false)); // do not show [type] 
 console.log(root);
@@ -146,6 +146,7 @@ rootRet.SaveToFile("./test.dat");
 
 console.log("\x1b[43m", "Load from file");
 rootRet.LoadFromFile("./test.dat");
+//rootRet.LoadFromFile("C:\\tmp\\test_pp.dat");
 console.log(rootRet);
 
 console.log("End Test");

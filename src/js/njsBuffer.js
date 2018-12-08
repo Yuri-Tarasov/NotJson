@@ -160,7 +160,7 @@ class njsBuffer {
         case njsTypeEnum["Int64"]: return this._ReadInt64();
         case njsTypeEnum["Float32"]: return this._ReadFloat32();
         case njsTypeEnum["Float64"]: return this._ReadFloat64();        
-        case njsTypeEnum["Bool"]: return this._ReadIntBool();
+        case njsTypeEnum["Bool"]: return this._ReadBool();
         case njsTypeEnum["Binary"]: return this._ReadBinary();
         case njsTypeEnum["Null"]: return this._ReadNull();
         }
@@ -198,6 +198,10 @@ class njsBuffer {
     _WriteFloat64(val) {  
         this._DataView.setFloat64(this._ptrW, val, this._lendian);
         this._ptrW += 8; 
+    }
+
+    _WriteBool(val) {  
+        this._WriteInt8(val ? 1: 0); 
     }
 
     _WriteNull() {  
@@ -252,6 +256,10 @@ class njsBuffer {
         return val;
     } 
 
+    _ReadBool() {
+        return (this._ReadInt8() == 1);
+    }
+	
     _ReadNull() {
         return null;
     }  

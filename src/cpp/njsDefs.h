@@ -5,6 +5,7 @@
 #include <iostream>
 
 
+#define NJS_RIFF "=NJS"
 
 #define NJS_TYPE_STRING 100
 #define NJS_TYPE_INT8 101

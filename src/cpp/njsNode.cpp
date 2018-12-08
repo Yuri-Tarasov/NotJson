@@ -1,6 +1,9 @@
 
 #include <iostream>
+#include <fstream>
 #include "njsNode.h"
+
+
 
 
 static
@@ -30,6 +33,12 @@ njsNode::njsNode(const std::string& sKeyName, const njsChildTypeEnum& enChildTyp
 njsNode::~njsNode()
 {
 
+}
+
+void njsNode::Clear()
+{
+	m_oValue.SetNull();
+	m_vChild.clear();
 }
 
 njsNode & njsNode::operator[](const std::string & sKeyName)
@@ -188,11 +197,69 @@ njsNode::IsChildExists(const std::string& sKeyName)
 
 bool njsNode::SaveToFile(const std::string & sFileName)
 {
+	std::fstream file;
+	file.open(sFileName, std::ios_base::out | std::ios_base::binary, std::ios_base::_Openprot);
+	bool bOpen = file.is_open();
+	if (!bOpen) {
+		NJS_LOG_ERR("Can't open file - '" << sFileName << "'");
+		return false;
+	}
+	njsBuffer oBuf;
+	if (!WriteToBuffer(oBuf)) {
+		NJS_LOG_ERR("Can't write to buffer");
+		return false;
+	}
+	file.write(NJS_RIFF, strlen(NJS_RIFF));
+	file.write((const char*)oBuf.GetData(), oBuf.GetDataLen());
+	if (file.fail()) {
+		NJS_LOG_ERR("Can't write to file - '" << sFileName << "'");
+		return false;
+	}
 	return true;
 }
 
 bool njsNode::LoadFromFile(const std::string & sFileName)
 {
+	std::fstream file;
+	file.open(sFileName, std::ios_base::in | std::ios_base::binary, std::ios_base::_Openprot);
+	bool bOpen = file.is_open();
+	if (!bOpen) {
+		NJS_LOG_ERR("Can't open file - '" << sFileName << "'");
+		return false;
+	}
+	file.seekg(0, file.end);
+	int length = file.tellg();
+	file.seekg(0, file.beg);
+
+	int nRiffSize = strlen(NJS_RIFF);
+	char* szRiff[10];
+	memset(szRiff, 0, 10);
+	file.read((char*)szRiff, nRiffSize);
+	//NJS_LOG_ERR("Read riff - '" << (const char*)szRiff << "'");
+	if (memcmp(NJS_RIFF, szRiff, nRiffSize) != 0) {
+		NJS_LOG_ERR("Bad format, wrong RIFF");
+		return false;
+	}
+	Clear();
+	length -= nRiffSize;
+	file.seekg(nRiffSize);
+
+	njsBuffer oBuf;
+	oBuf.Resize(length);
+
+
+	file.read((char*)oBuf.GetData(), length);
+	if (file.fail()) {
+		NJS_LOG_ERR("Can't read from file - '" << sFileName << "'");
+		return false;
+	}
+
+	if (!ReadFromBuffer(oBuf))
+	{
+		NJS_LOG_ERR("Can't read from buffer");
+		return false;
+	}
+
 	return true;
 }
 

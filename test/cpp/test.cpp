@@ -10,7 +10,7 @@ int main()
 {
 
     std::cout << "Start test.";
-
+	std::string sFilePath = "C:\\tmp\\test_pp.dat";
  
 	njsNode root("Root");
 	root["Node_1"] = std::string("First node");
@@ -43,8 +43,16 @@ int main()
 
 	njsNode RootFromBuf("RootFromBuf");
 	std::cout << "Read from Buffer:\n";
-	RootFromBuf.ReadFromBuffer(oBuf);
+	//RootFromBuf.ReadFromBuffer(oBuf);
 	std::cout << RootFromBuf.ToJson() << "Out:\n";
+
+
+	std::cout << "Save to File:\n";
+	root.SaveToFile(sFilePath);
+	//std::cout << "Load from File:\n";
+	//RootFromBuf.LoadFromFile("D:\\home\\Yuri\\Projects\\NotJson\\test\\js\\test.dat");
+	RootFromBuf.LoadFromFile(sFilePath);
+	std::cout << RootFromBuf.ToString() << "Out:\n";
 
     std::cout << "End test.";
     return 0;
